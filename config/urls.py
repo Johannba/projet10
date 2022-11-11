@@ -20,11 +20,6 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from projects.views import home_view,ProjectsView
 
-
-projects_router = routers.SimpleRouter()
-projects_router.register(r"projects/?", ProjectsView, basename='projects')
-
-
 urlpatterns = [
     path('api-auth/', include('rest_framework.urls')),
     path("admin/", admin.site.urls),
