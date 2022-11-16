@@ -1,44 +1,29 @@
-from django.contrib.auth import get_user_model
-from django.contrib.auth.hashers import make_password
 
 
 
-from rest_framework.serializers import ModelSerializer
-from rest_framework.serializers import ModelSerializer, ValidationError, SerializerMethodField
-from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework import serializers
+from user .models import User
 
-User = get_user_model()
-
-
-class UserSignupSerializer(ModelSerializer):
-
-    tokens = SerializerMethodField()
-
-    class Meta:
+class UserSerializer(serializers.ModelSerializer):
+    class Meta(object):
         model = User
-        fields = ['id', 'first_name', 'last_name', 'email', 'password', 'tokens']
-
-    def validate_email(self, value: str) -> str:
-        if User.objects.filter(email=value).exists():
-            raise ValidationError("User already exists")
-        return value
-
-    def validate_password(self, value: str) -> str:
-        if value is not None:
-            return make_password(value)
-        raise ValidationError("Password is empty")
-
-    def get_tokens(self, user: User) -> dict:
-        tokens = RefreshToken.for_user(user)
-        data = {
-            "refresh": str(tokens),
-            "access": str(tokens.access_token)
+        fields = (
+            "id",
+            "first_name",
+            "last_name",
+            "email",
+            "password",
+            "username",
+        )
+        extra_kwargs = {
+            "password": {"write_only": True, "style": {"input_type": "password"}}
         }
-        return data
 
-
-
-class UserSerializer(ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['id', 'first_name', 'last_name', 'email']
+    def create(self, validated_data):
+        return User.objects.create_user(
+            validated_data["username"],
+            password=validated_data["password"],
+            first_name=validated_data["first_name"],
+            last_name=validated_data["last_name"],
+            email=validated_data["email"],
+        )
