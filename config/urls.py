@@ -17,19 +17,17 @@ from django.contrib import admin
 from django.urls import include, path
 
 from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework import routers
 
-from projects.views import ProjectsViewset
+
 from user.views import RegisterApi
+from projects.urls import router as ProjectsViewset
 
-router = routers.SimpleRouter()
-router.register('projects', ProjectsViewset, basename='projects')
 
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('signup/', RegisterApi.as_view(), name='signup'),
     path('login/', TokenObtainPairView.as_view(), name='login'),
-    path('api/', include(router.urls)),
+    path('api/', include(ProjectsViewset.urls)),
 ]
  
