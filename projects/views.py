@@ -1,24 +1,43 @@
 
-from rest_framework.viewsets import ReadOnlyModelViewSet
-from rest_framework import status,response
+from rest_framework.viewsets import ModelViewSet
 
-from projects.models import Projects
-from projects.serializers import ProjectsSerializer
+from projects.models import Contributor, Project
+from projects.serializers import ContributorSerializer, ProjectSerializer
 
-class ProjectsViewset(ReadOnlyModelViewSet):
-      
-      serializer_class = ProjectsSerializer
-      
-      def get_queryset(self):
-            return Projects.objects.all()
-      
-      def create(self, request, *args, **kwargs):
-        project = Projects(author_user_id=request.user.id)
-        data = request.data.copy()
-        data['author_user_id'] = request.user.id
-        serializer = self.serializer_class(project, data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            return response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+from user.serializers import UserSerializer
+
+class ProjectViewSet(ModelViewSet):
+    serializer_class = ProjectSerializer
+    http_method_names = ["get", "post", "put", "delete"]
+    
+    def get_queryset(self):
+        return Project.objects.all()
+    
+    def create(self, request, *args, **kwargs):
+        request.POST._mutable = True
+        request.data["author_user_id"] = request.user.pk
+        request.POST._mutable = False
+        return super(ProjectViewSet, self).create(request, *args, **kwargs)
+    
+    def update(self, request, *args, **kwargs):
+        request.POST._mutable = True
+        request.data["author_user_id"] = request.user.pk
+        request.POST._mutable = False
+        return super(ProjectViewSet, self).update(request, *args, **kwargs)
+
+
+   
+class ContributorViewSet(ModelViewSet):
+    serializer_class =  UserSerializer
+    http_method_names = ["get", "post", "put", "delete"]
+    
+    def get_queryset(self):
+        return Contributor.objects.all()
+    
+    def create(self, request, *args, **kwargs):
+        print(kwargs)
+        request.POST._mutable = True
+        request.data["project"] = self.kwargs["project_pk"]
+        request.POST._mutable = False
+        return super(ContributorViewSet, self).create(request, *args, **kwargs)
+    

@@ -20,7 +20,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 
 
 from user.views import RegisterApi
-from projects.urls import router as ProjectsViewset
+from projects.urls import router as ProjectViewset, users_router as ContributorViewSet
 
 
 
@@ -28,6 +28,8 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path('signup/', RegisterApi.as_view(), name='signup'),
     path('login/', TokenObtainPairView.as_view(), name='login'),
-    path('api/', include(ProjectsViewset.urls)),
+    path('', include(ProjectViewset.urls)),
+    path('', include(ContributorViewSet.urls)),
 ]
+
  
