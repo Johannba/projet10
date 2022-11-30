@@ -30,7 +30,7 @@ class IssueSerializer(ModelSerializer):
             "status",
             "project_id",
             "author_user_id",
-            "assignee_user_id",
+            "assignee_user",
             "created_time",
         ]  
         
