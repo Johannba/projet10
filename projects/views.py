@@ -57,6 +57,8 @@ class IssueViewSet(ModelViewSet):
     
     def update(self, request, *args, **kwargs):
         request.POST._mutable = True
+        request.data["project_id"] = self.kwargs["project__pk"] 
         request.data["author_user_id"] = request.user.pk
+        request.data["assignee_user"] = request.user.pk
         request.POST._mutable = False
         return super(IssueViewSet, self).update(request, *args, **kwargs)
