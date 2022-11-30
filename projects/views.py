@@ -48,7 +48,6 @@ class IssueViewSet(ModelViewSet):
         return Issue.objects.all()
     
     def create(self, request, *args, **kwargs):
-        print(kwargs)
         request.POST._mutable = True
         request.data["project_id"] = self.kwargs["project__pk"] 
         request.data["author_user_id"] = request.user.pk
