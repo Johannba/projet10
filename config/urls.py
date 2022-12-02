@@ -21,7 +21,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 
 
 from user.views import RegisterApi
-from projects.urls import router as ProjectViewset, users_router as ContributorViewSet, issue_router as IssueViewSet
+from projects.urls import router as ProjectViewset, users_router as ContributorViewSet, issue_router as IssueViewSet, comment_router as CommentViewSet
 
 
 
@@ -32,6 +32,7 @@ urlpatterns = [
     path('', include(ProjectViewset.urls)),
     path('', include(ContributorViewSet.urls)),
     path('', include(IssueViewSet.urls)),
+    path('', include(CommentViewSet.urls)),
 ]
 
  

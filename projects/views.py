@@ -1,8 +1,8 @@
 
 from rest_framework.viewsets import ModelViewSet
 
-from projects.models import Contributor, Issue, Project
-from projects.serializers import ContributorSerializer, IssueSerializer, ProjectSerializer
+from projects.models import Comment, Contributor, Issue, Project
+from projects.serializers import CommentSerializer, ContributorSerializer, IssueSerializer, ProjectSerializer
 
 from user.serializers import UserSerializer
 
@@ -62,3 +62,29 @@ class IssueViewSet(ModelViewSet):
         request.data["assignee_user"] = request.user.pk
         request.POST._mutable = False
         return super(IssueViewSet, self).update(request, *args, **kwargs)
+    
+    def delete(self, request, *args, **kwargs):
+        return super(IssueViewSet, self).delete(request, *args, **kwargs)
+        
+    
+    
+class CommentViewSet(ModelViewSet):
+    serializer_class = CommentSerializer
+    http_method_names = ["get", "post", "put", "delete"]
+    
+    def get_queryset(self):
+        return Comment.objects.all()
+    
+    def create(self, request, *args, **kwargs):
+        request.POST._mutable = True
+        request.data["issue_id"] = self.kwargs["project__pk"] 
+        request.data["author_user_id"] = request.user.pk
+        request.POST._mutable = False
+        return super(CommentViewSet, self).create(request, *args, **kwargs)
+    
+    def update(self, request, *args, **kwargs):
+        request.POST._mutable = True
+        request.data["issue_id"] = self.kwargs["project__pk"] 
+        request.data["author_user_id"] = request.user.pk
+        request.POST._mutable = False
+        return super(CommentViewSet, self).update(request, *args, **kwargs)
