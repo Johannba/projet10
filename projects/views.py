@@ -1,17 +1,23 @@
 
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.permissions import IsAuthenticated
+
+from django.db.models import Q
 
 from projects.models import Comment, Contributor, Issue, Project
 from projects.serializers import CommentSerializer, ContributorSerializer, IssueSerializer, ProjectSerializer
 
-from user.serializers import UserSerializer
+from projects.permission import IsContributorOrAuthorProjectInProjectView
+
 
 class ProjectViewSet(ModelViewSet):
     serializer_class = ProjectSerializer
     http_method_names = ["get", "post", "put", "delete"]
+    permission_classes = [IsAuthenticated,IsContributorOrAuthorProjectInProjectView]
     
     def get_queryset(self):
-        return Project.objects.all()
+        return Project.objects.filter(Q(author_user_id=self.request.user.id) | Q(contributor__user_id=self.request.user.id))
+
     
     def create(self, request, *args, **kwargs):
         request.POST._mutable = True
@@ -34,6 +40,7 @@ class ContributorViewSet(ModelViewSet):
     def get_queryset(self):
         return Contributor.objects.filter(project_id=self.kwargs["project__pk"])
     
+    
     def create(self, request, *args, **kwargs):
         request.POST._mutable = True
         request.data["project_id"] = self.kwargs["project__pk"] 
@@ -45,7 +52,9 @@ class IssueViewSet(ModelViewSet):
     http_method_names = ["get", "post", "put", "delete"]
     
     def get_queryset(self):
-        return Issue.objects.all()
+        return Issue.objects.filter(project_id=self.kwargs["project__pk"])
+    
+    # Récupérer la liste des problèmes (issues) liés à un projet (project)
     
     def create(self, request, *args, **kwargs):
         request.POST._mutable = True
@@ -62,22 +71,20 @@ class IssueViewSet(ModelViewSet):
         request.data["assignee_user"] = request.user.pk
         request.POST._mutable = False
         return super(IssueViewSet, self).update(request, *args, **kwargs)
-    
-    def delete(self, request, *args, **kwargs):
-        return super(IssueViewSet, self).delete(request, *args, **kwargs)
         
-    
     
 class CommentViewSet(ModelViewSet):
     serializer_class = CommentSerializer
     http_method_names = ["get", "post", "put", "delete"]
     
     def get_queryset(self):
-        return Comment.objects.all()
+        return Comment.objects.filter(issue_id=self.kwargs["issue__pk"])
+    
+    # Récupérer la liste de tous les commentaires liés à un problème (issue)
     
     def create(self, request, *args, **kwargs):
         request.POST._mutable = True
-        request.data["issue_id"] = self.kwargs["project__pk"] 
+        request.data["issue_id"] = self.kwargs["issue__pk"] 
         request.data["author_user_id"] = request.user.pk
         request.POST._mutable = False
         return super(CommentViewSet, self).create(request, *args, **kwargs)
