@@ -2,6 +2,7 @@ from rest_framework import generics
 from rest_framework.response import Response
 from user import serializers
 
+
 class RegisterApi(generics.GenericAPIView):
     serializer_class = serializers.UserSerializer
 

@@ -19,20 +19,21 @@ from django.urls import include, path
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 
-
 from user.views import RegisterApi
-from projects.urls import router as ProjectViewset, users_router as ContributorViewSet, issue_router as IssueViewSet, comment_router as CommentViewSet
-
+from projects.urls import (
+    router as ProjectViewset,
+    users_router as ContributorViewSet,
+    issue_router as IssueViewSet,
+    comment_router as CommentViewSet,
+)
 
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path('signup/', RegisterApi.as_view(), name='signup'),
-    path('login/', TokenObtainPairView.as_view(), name='login'),
-    path('', include(ProjectViewset.urls)),
-    path('', include(ContributorViewSet.urls)),
-    path('', include(IssueViewSet.urls)),
-    path('', include(CommentViewSet.urls)),
+    path("signup/", RegisterApi.as_view(), name="signup"),
+    path("login/", TokenObtainPairView.as_view(), name="login"),
+    path("", include(ProjectViewset.urls)),
+    path("", include(ContributorViewSet.urls)),
+    path("", include(IssueViewSet.urls)),
+    path("", include(CommentViewSet.urls)),
 ]
-
- 

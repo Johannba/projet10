@@ -37,5 +37,7 @@ class Migration(migrations.Migration):
                 ),
             ],
         ),
-        migrations.DeleteModel(name="Projects",),
+        migrations.DeleteModel(
+            name="Projects",
+        ),
     ]
