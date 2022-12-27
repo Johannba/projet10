@@ -8,7 +8,7 @@ from projects.views import (
 )
 
 
-router = routers.SimpleRouter(trailing_slash=False)
+router = routers.SimpleRouter(trailing_slash=True)
 router.register(r"project/?", ProjectViewSet, basename="project")
 
 users_router = routers.NestedSimpleRouter(router, r"project/?", lookup="project")
