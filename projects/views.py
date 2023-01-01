@@ -102,7 +102,7 @@ class CommentViewSet(ModelViewSet):
 
     def update(self, request, *args, **kwargs):
         request.POST._mutable = True
-        request.data["issue_id"] = self.kwargs["pk"]
+        request.data["issue_id"] = self.kwargs["issue__pk"]
         request.data["author_user_id"] = request.user.pk
         request.POST._mutable = False
         return super(CommentViewSet, self).update(request, *args, **kwargs)

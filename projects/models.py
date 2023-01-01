@@ -3,9 +3,21 @@ from django.db import models
 
 
 class Project(models.Model):
+    
+    BACKEND = 'BACKEND'
+    FRONTEND = 'FRONTEND'
+    IOS = 'IOS'
+    ANDROID = 'ANDROID'
+    TYPES_CHOICES = (
+        (BACKEND, 'Back-end'),
+        (FRONTEND, 'Front-end'),
+        (IOS, 'iOS'),
+        (ANDROID, 'Android')
+    )
+    
     title = models.CharField(max_length=155)
     description = models.CharField(max_length=5000)
-    type = models.CharField(max_length=12)
+    type = models.CharField(max_length=12, choices=TYPES_CHOICES)
     author_user_id = models.ForeignKey(
         to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE
     )
@@ -20,13 +32,45 @@ class Contributor(models.Model):
 
 
 class Issue(models.Model):
+    
+       # Priorities definition
+    LOW = 'LOW'
+    MEDIUM = 'MEDIUM'
+    HIGH = 'HIGH'
+    PRIORITY_CHOICES = (
+        (LOW, 'Low'),
+        (MEDIUM, 'Medium'),
+        (HIGH, 'High')
+    )
+
+    # Tags definition
+    BUG = 'BUG'
+    IMPROVEMENT = 'IMPROVEMENT'
+    TASK = 'TASK'
+    TAGS_CHOICES = (
+        (BUG, 'Bug'),
+        (IMPROVEMENT, 'Improvement'),
+        (TASK, 'Task')
+    )
+
+    # Status definition
+    TODO = 'TODO'
+    WIP = 'WIP'
+    DONE = 'DONE'
+    STATUS_CHOICES = (
+        (TODO, 'To-do'),
+        (WIP, 'WIP'),
+        (DONE, 'Done')
+    )
+    
     title = models.CharField(max_length=155)
     description = models.CharField(max_length=5000)
     created_time = models.DateTimeField(auto_now_add=True)
 
-    priority = models.CharField(max_length=12)
-    tag = models.CharField(max_length=12)
-    status = models.CharField(max_length=12)
+    priority = models.CharField(max_length=12, choices=PRIORITY_CHOICES)
+    tag = models.CharField(max_length=12, choices=TAGS_CHOICES)
+    status = models.CharField(max_length=12, choices=STATUS_CHOICES)
+
 
     author_user_id = models.ForeignKey(
         to=settings.AUTH_USER_MODEL,
